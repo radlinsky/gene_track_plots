@@ -51,35 +51,35 @@ plot_tracks <- function(
     geom_text_size <- theme_size / (14/5)
     # theme.size = (14/5) * geom.text.size
     if (add_connections) {
-        # track_tb <- add_introns(track_tb, groupby = facet_wrap_by)
-        if (nrow(dplyr::filter(track_tb, !is.na(jstart) & !is.na(jend))) > 0) {
-            if (!color_connections) {
-                plot <-
-                    dplyr::filter(track_tb, !is.na(jstart) & !is.na(jend)) %>%
-                    ggplot2::ggplot() +
-                    ggplot2::geom_segment(ggplot2::aes(
-                        x = jstart, xend = jend,
-                        y = 0, yend = 0
-                    ),
-                    size = intron_width
-                )
-            } else{
-                plot <-
-                    dplyr::filter(track_tb, !is.na(jstart) & !is.na(jend)) %>%
-                    dplyr::mutate(junction = paste0(jstart, "-", jend)) %>%
-                    ggplot2::ggplot() +
-                    ggplot2::geom_segment(ggplot2::aes(
-                        x = jstart, xend = jend,
-                        y = 0, yend = 0,
-                        color = junction
-                    ),
-                    size = intron_width
-                )
-            }
-
+        track_tb <- add_introns(track_tb, groupby = facet_wrap_by)
+    }
+    # if introns are here, we can color them
+    if (nrow(dplyr::filter(track_tb, !is.na(jstart) & !is.na(jend))) > 0) {
+        # unless we dont want colored introns
+        if (!color_connections) {
+            plot <-
+                dplyr::filter(track_tb, !is.na(jstart) & !is.na(jend)) %>%
+                ggplot2::ggplot() +
+                ggplot2::geom_segment(ggplot2::aes(
+                    x = jstart, xend = jend,
+                    y = 0, yend = 0
+                ),
+                size = intron_width
+            )
         } else{
-            plot <- ggplot2::ggplot()
+            plot <-
+                dplyr::filter(track_tb, !is.na(jstart) & !is.na(jend)) %>%
+                dplyr::mutate(junction = paste0(jstart, "-", jend)) %>%
+                ggplot2::ggplot() +
+                ggplot2::geom_segment(ggplot2::aes(
+                    x = jstart, xend = jend,
+                    y = 0, yend = 0,
+                    color = junction
+                ),
+                size = intron_width
+            )
         }
+
     } else{
         plot <- ggplot2::ggplot()
     }
